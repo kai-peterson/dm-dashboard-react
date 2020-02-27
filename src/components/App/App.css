@@ -1,11 +1,35 @@
 .App {
   width: 100vw;
   height: 100vh;
-  background-color: rgb(36, 78, 104)
+  background-color: rgb(36, 78, 104);
 }
 
 .App-header h1 {
   padding: 15px 15px 20px 15px;
   font-style: italic;
   color: rgb(254, 254, 254)
+}
+
+button {
+  background-color: darkslategrey;
+  color: white;
+  border-radius: 10%;
+  border-color: rgb(10, 12, 12);
+  font-weight: bold;
+  padding: 5px 15px;
+  transition: ease-in-out 250ms;
+
+}
+
+button:hover {
+  background-color: rgb(37, 63, 63);
+}
+
+button:active {
+  background-color: rgb(41, 38, 38);
+  transition: ease-in-out 10ms;
+}
+
+button:focus {
+  outline: 0;
 }
