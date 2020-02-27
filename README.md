@@ -12,7 +12,8 @@ Front end for dm-dashboard repo. Web app for DMs to use to streamline their proc
 
 React, axios, react-router-dom, material-ui...
 
-# `npm start`
+# Instructions to Run
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. Fork and clone repo
+2. npm install
+3. npm start
