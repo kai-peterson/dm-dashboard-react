@@ -1,0 +1,41 @@
+.audio-dashboard-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(36, 78, 104);
+}
+
+.audio-dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 100vh;
+}
+
+.audio-dashboard-grid div {
+    background-color: darkslategrey;
+    width: 200px;
+    height: 200px;
+    margin: 25px;
+    border-radius: 25px;
+}
+
+@media only screen and (min-width: 1440px) {
+    .audio-dashboard-grid div {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .audio-dashboard-grid div {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .audio-dashboard-grid div {
+        width: 100px;
+        height: 100px;
+    }
+}

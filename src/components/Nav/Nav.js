@@ -20,7 +20,7 @@ function Nav() {
 
         return (
             <div className="top-nav">
-                <AppBar position="static" style={{'background-color': 'darkslategrey'}}>
+                <AppBar position="static" style={{'backgroundColor': 'darkslategrey'}}>
                     <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
                         <Tab onClick={() => handleRouteChange("/audio")} label="Audio"/>
                         <Tab onClick={() => handleRouteChange("/dice")} label="Dice"/>

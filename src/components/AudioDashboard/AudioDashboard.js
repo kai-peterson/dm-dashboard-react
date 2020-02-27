@@ -1,9 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import './AudioDashboard.css';
 
 function AudioDashboard() {
     return (
-        <div>
-            DASHBOARD WITH BUTTONS AND ICONS LINKED TO AUDIO GOES HERE...
+        <div className="audio-dashboard-container">
+            <div className="audio-dashboard-grid">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     )
 }
