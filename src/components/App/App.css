@@ -30,7 +30,8 @@ button:active {
   transition: ease-in-out 10ms;
 }
 
-button:focus {
+button:focus,
+input:focus {
   outline: 0;
 }
 

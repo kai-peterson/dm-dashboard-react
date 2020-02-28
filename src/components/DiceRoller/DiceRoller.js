@@ -13,9 +13,7 @@ function DiceRoller() {
     useEffect(() => {
         axios.get('http://localhost:8080/rolls/history')
             .then((response) => {
-                setHistory(response.data)
-                console.log(history);
-
+                setHistory(response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -98,7 +96,7 @@ function DiceRoller() {
             {dice[0] &&
                 <div className="dice-display-container">
                     <div className={`dice-display ${fade ? 'fade-in' : 'fade-out'}`}>
-                        {dice.map((die) => <div><img src={`/images/d${die}.png`} /></div>)}
+                        {dice.map((die, i) => <div key={i}><img src={`/images/d${die}.png`} alt={`${die}-sided die icon`}/></div>)}
                     </div>
                     {rolls[0] &&
                         <div className={`rolls-display ${fade ? 'fade-in' : 'fade-out'}`}>
@@ -121,12 +119,13 @@ function DiceRoller() {
                 <div className="roll-history-container fade-in">
                     <h1>History</h1>
                     {history.map((roll) =>
-                    <ul>
+                    <ul key={roll.id}>
                         <h2>{roll.rolls.split(', ').join(' + ') + ' = ' + roll.result}</h2>
                     </ul>
                     )}
                 </div>
             }
+
         </div >
     )
 }
