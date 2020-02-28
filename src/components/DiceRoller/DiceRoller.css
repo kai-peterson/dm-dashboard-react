@@ -1,6 +1,7 @@
 .dice-container { 
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .dice-container div {
@@ -16,4 +17,60 @@
 .dice-container button {
     position: absolute;
     bottom: 0;
+}
+
+.dice-display-container {
+    padding: 5vw;
+}
+
+.dice-display {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dice-display div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    height: 125px;
+    width: 125px;
+}
+
+.dice-display-buttons {
+    display: flex;
+}
+
+.dice-display-buttons button {
+    margin: 20px;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1;}
+    99% { opacity: 0.01;}
+    100% { opacity: 0;}
+}  
+@keyframes fadeIn {
+    0% { opacity: 0;}
+    99% { opacity: 0.99;}
+    100% { opacity: 0;}
+}
+
+.rolls-display {
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+}
+
+.rolls-display h2,
+.rolls-display h1 {
+    padding: 0 5px;
 }

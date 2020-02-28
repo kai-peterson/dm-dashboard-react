@@ -1,7 +1,7 @@
 .App {
   width: 100vw;
   height: 100vh;
-  background-color: rgb(36, 78, 104);
+  color: white;
 }
 
 .App-header h1 {
@@ -33,3 +33,4 @@ button:active {
 button:focus {
   outline: 0;
 }
+
