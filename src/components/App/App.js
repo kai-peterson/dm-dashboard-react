@@ -15,7 +15,6 @@ function App() {
           <h1>DM Dashboard</h1>
         </header>
         <NavBar />
-        <Redirect from="/" to="/audio"/>
         <Route exact path="/audio" component={AudioDashboard}/>
         <Route exact path="/dice" component={DiceRoller}/>
         <Route exact path="/calculator" component={Calculator}/>

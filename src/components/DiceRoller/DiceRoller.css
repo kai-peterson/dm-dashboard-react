@@ -21,6 +21,7 @@
 
 .dice-display-container {
     padding: 5vw;
+    padding-bottom: 0;
 }
 
 .dice-display {
@@ -67,10 +68,26 @@
 .rolls-display {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     padding-left: 15px;
 }
 
 .rolls-display h2,
 .rolls-display h1 {
     padding: 0 5px;
+}
+
+.roll-history-container {
+    padding: 5vw;
+    padding-top: 0;
+}
+
+.roll-history-container h1 {
+    font-style: italic;
+}
+
+.roll-history-container h1,
+.roll-history-container ul {
+    padding: 20px;
+    transition: ease-in 1s;
 }

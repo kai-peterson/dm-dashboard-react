@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DiceRoller.css';
 import axios from 'axios';
 import querystring from 'querystring';
@@ -7,7 +7,20 @@ function DiceRoller() {
     const [dice, setDice] = useState([]);
     const [rolls, setRolls] = useState([]);
     const [rollResult, setRollResult] = useState();
+    const [history, setHistory] = useState([]);
     const [fade, setFade] = useState();
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/rolls/history')
+            .then((response) => {
+                setHistory(response.data)
+                console.log(history);
+
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }, [])
 
     const addDie = (die) => {
         if (!fade) {
@@ -35,9 +48,17 @@ function DiceRoller() {
                 // storing data in a weird way in db (a string but in array format)
                 // following two lines just turn that string into an actual array
                 let rolls = response.data.rolls;
-                let rollsInArray = rolls.slice(1, rolls.length - 1).split(', ');
+                let rollsInArray = rolls.split(', ');
                 setRolls(rollsInArray);
-                setRollResult(response.data.result)
+                setRollResult(response.data.result);
+
+                axios.get('http://localhost:8080/rolls/history')
+                    .then((response) => {
+                        setHistory(response.data)
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             })
             .catch((error) => {
                 console.log(error);
@@ -96,6 +117,16 @@ function DiceRoller() {
                 </div>
             }
 
+            {history[0] &&
+                <div className="roll-history-container fade-in">
+                    <h1>History</h1>
+                    {history.map((roll) =>
+                    <ul>
+                        <h2>{roll.rolls.split(', ').join(' + ') + ' = ' + roll.result}</h2>
+                    </ul>
+                    )}
+                </div>
+            }
         </div >
     )
 }
