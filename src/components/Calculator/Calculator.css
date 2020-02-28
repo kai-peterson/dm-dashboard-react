@@ -34,6 +34,8 @@
     padding: 5% 5%;
     height: 6%;
     max-width: 100%;
+    font-size: 250%;
+    color: darkslategrey;
 }
 
 .calculator-container .bottom-left {
@@ -62,7 +64,8 @@
         padding-left: 10px;
         padding-right: 10px;
     } */
-    .calculator-container button {
+    .calculator-container button,
+    .calculator-container input {
         font-size: 150%;
     }
 }
@@ -81,4 +84,8 @@
 
 .calculator {
     margin: 0 auto;
+}
+
+.calculator-container .history-container {
+    padding-left: 0;
 }

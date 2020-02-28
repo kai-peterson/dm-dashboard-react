@@ -77,17 +77,17 @@
     padding: 0 5px;
 }
 
-.roll-history-container {
+.history-container {
     padding: 5vw;
     padding-top: 0;
 }
 
-.roll-history-container h1 {
+.history-container h1 {
     font-style: italic;
 }
 
-.roll-history-container h1,
-.roll-history-container ul {
+.history-container h1,
+.history-container ul {
     padding: 20px;
     transition: ease-in 1s;
 }

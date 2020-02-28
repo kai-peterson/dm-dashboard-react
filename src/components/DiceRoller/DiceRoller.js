@@ -116,7 +116,7 @@ function DiceRoller() {
             }
 
             {history[0] &&
-                <div className="roll-history-container fade-in">
+                <div className="history-container fade-in">
                     <h1>History</h1>
                     {history.map((roll) =>
                     <ul key={roll.id}>
