@@ -22,6 +22,7 @@ const Calculator = () => {
     }
 
     const handleCalc = () => {
+        setInput('');
         axios.post('http://localhost:8080/calculations', querystring.parse(`equation=${input.replace('÷', '/')}`))
             .then((response) => {
                 setHistory(response.data);

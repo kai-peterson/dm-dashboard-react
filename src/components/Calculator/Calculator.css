@@ -4,13 +4,13 @@
     grid-gap: 30px;
     padding: 50px;
     padding-top: 20px;
-    height: 675px;
     margin: 0 auto;
 }
 
 .calculator-container div {
     max-height: 100%;
     max-width: 550px;
+    height: 675px;
 }
 
 .calculator-container button,
@@ -60,10 +60,6 @@
 }
 
 @media only screen and (max-width: 600px) {
-    /* .calculator-container {
-        padding-left: 10px;
-        padding-right: 10px;
-    } */
     .calculator-container button,
     .calculator-container input {
         font-size: 150%;
@@ -71,14 +67,12 @@
 }
 
 @media only screen and (max-width: 480px) {
+    .calculator-container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
     .calculator-container div {
         height: 450px;
-    }
-}
-
-@media only screen and (max-width: 420px) {
-    .calculator-container div {
-        height: 375px;
     }
 }
 
