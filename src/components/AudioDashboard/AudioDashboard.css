@@ -12,11 +12,19 @@
 }
 
 .audio-dashboard-grid div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     background-color: darkslategrey;
     width: 200px;
     height: 200px;
     margin: 25px;
     border-radius: 25px;
+}
+
+.audio-dashboard-grid h3 {
+    padding-top: 15px;
 }
 
 @media only screen and (min-width: 1440px) {
