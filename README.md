@@ -2,6 +2,8 @@
 
 Front end for dm-dashboard repo. Web app for DMs to use to streamline their processes while running games of DnD.
 
+# dm-dashboard repo server must be running to use all features
+
 # Features
 
 - Audio dashboard to quickly and seamlessly set the mood
