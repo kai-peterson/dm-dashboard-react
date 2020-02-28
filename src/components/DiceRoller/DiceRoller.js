@@ -31,16 +31,15 @@ function DiceRoller() {
 
     const handleRoll = () => {
         axios.post('http://localhost:8080/rolls', querystring.parse(`rolls=${dice.join(' ')}`))
-            .then( (response) => {
+            .then((response) => {
                 // storing data in a weird way in db (a string but in array format)
                 // following two lines just turn that string into an actual array
                 let rolls = response.data.rolls;
                 let rollsInArray = rolls.slice(1, rolls.length - 1).split(', ');
-            
                 setRolls(rollsInArray);
                 setRollResult(response.data.result)
             })
-            .catch( (error) => {
+            .catch((error) => {
                 console.log(error);
             })
     }
@@ -75,27 +74,27 @@ function DiceRoller() {
                 </div>
             </div>
 
-                {dice[0] &&
-                    <div className="dice-display-container">
-                        <div className={`dice-display ${fade ? 'fade-in' : 'fade-out'}`}>
-                            {dice.map((die) => <div><img src={`/images/d${die}.png`}/></div>)}
-                        </div>
-                        {rolls[0] && 
-                            <div className={`rolls-display ${fade ? 'fade-in' : 'fade-out'}`}>
-                                {rolls.map( (roll, i) => 
-                                    i === rolls.length - 1 ?
+            {dice[0] &&
+                <div className="dice-display-container">
+                    <div className={`dice-display ${fade ? 'fade-in' : 'fade-out'}`}>
+                        {dice.map((die) => <div><img src={`/images/d${die}.png`} /></div>)}
+                    </div>
+                    {rolls[0] &&
+                        <div className={`rolls-display ${fade ? 'fade-in' : 'fade-out'}`}>
+                            {rolls.map((roll, i) =>
+                                i === rolls.length - 1 ?
                                     <><h2>{roll}</h2><h2>=</h2></> :
                                     <><h2>{roll}</h2><h2>+</h2></>
-                                )}
-                                <h1>{rollResult}</h1>
-                            </div>
-                        }
-                        <div className={`dice-display-buttons ${fade ? 'fade-in' : 'fade-out'}`}>
-                            <button onClick={handleRoll}>ROLL</button>
-                            <button onClick={handleReset}>RESET</button>
+                            )}
+                            <h1>{rollResult}</h1>
                         </div>
+                    }
+                    <div className={`dice-display-buttons ${fade ? 'fade-in' : 'fade-out'}`}>
+                        <button onClick={handleRoll}>ROLL</button>
+                        <button onClick={handleReset}>RESET</button>
                     </div>
-                }
+                </div>
+            }
 
         </div >
     )
