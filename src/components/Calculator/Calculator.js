@@ -8,14 +8,14 @@ const Calculator = () => {
     const [history, setHistory] = useState([]);
 
     useEffect( () => {
-        axios.get('/calculations/history')
+        axios.get('http://localhost:8080/calculations/history')
             .then((response) => {
                 setHistory(response.data)
             })
             .catch((error) => {
                 console.log(error);
             })
-    }, [])
+    }, [history])
 
     const handleClick = (num) => {
         setInput(input + num);

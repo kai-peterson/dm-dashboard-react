@@ -1,0 +1,13 @@
+.session-form-container > div {
+    padding: 15px;
+}
+
+.session-form-container h2 {
+    display: inline-block;
+    padding-right: 20px;
+}
+
+.session-form-container button {
+    margin-left: 15px;
+    margin-top: 15px;
+}

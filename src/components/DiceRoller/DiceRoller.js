@@ -18,7 +18,7 @@ function DiceRoller() {
             .catch((error) => {
                 console.log(error);
             })
-    }, [])
+    }, [history])
 
     const addDie = (die) => {
         if (!fade) {
@@ -49,14 +49,6 @@ function DiceRoller() {
                 let rollsInArray = rolls.split(', ');
                 setRolls(rollsInArray);
                 setRollResult(response.data.result);
-
-                axios.get('http://localhost:8080/rolls/history')
-                    .then((response) => {
-                        setHistory(response.data)
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
             })
             .catch((error) => {
                 console.log(error);

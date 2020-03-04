@@ -17,6 +17,8 @@ function Nav() {
             setValue(1);
         } else if (pathname === '/calculator') {
             setValue(2);
+        } else if (pathname === '/session') {
+            setValue(3);
         }
     }, [pathname])
 
@@ -35,6 +37,7 @@ function Nav() {
                         <Tab onClick={() => handleRouteChange("/audio")} label="Audio"/>
                         <Tab onClick={() => handleRouteChange("/dice")} label="Dice"/>
                         <Tab onClick={() => handleRouteChange("/calculator")} label="Calculator" />
+                        <Tab onClick={() => handleRouteChange("/session")} label="Session" />
                     </Tabs>
                 </AppBar>
             </div>
