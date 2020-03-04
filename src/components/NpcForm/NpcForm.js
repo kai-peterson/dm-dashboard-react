@@ -15,7 +15,7 @@ const NpcForm = (props) => {
 
     const handlePostNpc = () => {
         // validate that user has completed all fields in form
-        if (Object.values(npcInfo).length != 12) {
+        if (Object.values(npcInfo).length != 13) {
             alert("You missed a field")
         } else {
             axios.post('http://localhost:8080/npc', npcInfo)
@@ -39,6 +39,10 @@ const NpcForm = (props) => {
             <div>
                 <h2>Age: </h2>
                 <input onChange={(event) => handleNpcInfoChange('age', event)} placeholder="Age" type="number" />
+            </div>
+            <div>
+                <h2>Level: </h2>
+                <input onChange={(event) => handleNpcInfoChange('level', event)} placeholder="Level" type="number" />
             </div>
             <div>
                 <h2>Class: </h2>
