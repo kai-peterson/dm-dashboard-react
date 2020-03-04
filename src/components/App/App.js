@@ -6,9 +6,10 @@ import NavBar from '../Nav/Nav';
 import AudioDashboard from '../AudioDashboard/AudioDashboard';
 import DiceRoller from '../DiceRoller/DiceRoller';
 import Calculator from '../Calculator/Calculator';
+import SessionDisplay from '../SessionDisplay/SessionDisplay';
 import Session from '../Session/Session';
-import CurrentSession from '../CurrentSession/CurrentSession';
 import SessionForm from '../SessionForm/SessionForm';
+import NpcForm from '../NpcForm/NpcForm';
 
 function App() {
   return (
@@ -21,9 +22,10 @@ function App() {
         <Route exact path="/audio" component={AudioDashboard}/>
         <Route exact path="/dice" component={DiceRoller}/>
         <Route exact path="/calculator" component={Calculator}/>
-        <Route exact path="/session" component={Session} />
-        <Route exact path="/session/:id" component={CurrentSession} />
+        <Route exact path="/session" component={SessionDisplay} />
+        <Route exact path="/session/:id" component={Session} />
         <Route exact path="/session-form" component={SessionForm} />
+        <Route exact path="/session/:id/npc" component={NpcForm} />
       </div>
     </Router>
   );

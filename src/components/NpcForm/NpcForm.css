@@ -1,0 +1,50 @@
+.npc-form-container {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 25px;
+}
+
+.npc-form-container h2 {
+    display: inline-block;
+    margin-right: 15px;
+    width: 150px;
+}
+
+.npc-form-container input,
+.npc-form-container textarea,
+.npc-form-container label,
+.npc-form-container span {
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 120%;
+}
+
+.npc-form-container input {
+    max-width: 200px;
+}
+
+.npc-form-container textarea {
+    width: 500px;
+    height: 200px;
+}
+
+.npc-form-container span {
+    padding-left: 5px;
+    padding-right: 15px;
+}
+
+.npc-form-container__radio-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.npc-form-container__radio-buttons input {
+    margin: 0 20px 0 10px;
+}
+
+.npc-form-container button {
+    margin-top: 10px;
+    padding: 15px 30px;
+    max-width: 180px;
+    font-size: 125%;
+}

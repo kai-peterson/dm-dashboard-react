@@ -1,0 +1,21 @@
+.session-display-container {
+    padding: 25px;
+}
+
+.session-display-container h2,
+.session-display-container ul {
+    padding-top: 25px;
+}
+
+.session-display-container ul {
+    list-style: none;
+}
+
+.session-display-container li {
+    padding: 15px 0 15px 0;
+    font-size: 120%;
+}
+
+.session-display-container li > button {
+    margin-left: 10px;
+}
