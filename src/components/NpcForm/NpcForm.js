@@ -15,7 +15,7 @@ const NpcForm = (props) => {
 
     const handlePostNpc = () => {
         // validate that user has completed all fields in form
-        if (Object.values(npcInfo).length != 13) {
+        if (Object.values(npcInfo).length !== 13) {
             alert("You missed a field")
         } else {
             axios.post('http://localhost:8080/npc', npcInfo)

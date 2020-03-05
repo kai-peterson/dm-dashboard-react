@@ -10,6 +10,7 @@ import SessionDisplay from '../SessionDisplay/SessionDisplay';
 import Session from '../Session/Session';
 import SessionForm from '../SessionForm/SessionForm';
 import NpcForm from '../NpcForm/NpcForm';
+import NpcStatsForm from '../NpcStatsForm/NpcStatsForm';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route exact path="/session/:id" component={Session} />
         <Route exact path="/session-form" component={SessionForm} />
         <Route exact path="/session/:id/npc" component={NpcForm} />
+        <Route exact path="/session/:sessionId/npc/:npdId/stats" component={NpcStatsForm} />
       </div>
     </Router>
   );
