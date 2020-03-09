@@ -108,15 +108,10 @@ const NpcStatsForm = (props) => {
             setProficiencies({ ...proficiencies, [value]: 'exp' })
         }
 
-        console.log(value);
-
-
         if (stats[value]) {
             let bonus = findBonus(stats[value]);
             setBonuses({ ...bonuses, [value]: bonus + expertiseBonus })
         } else if (!bonuses[value]) {
-            console.log('hit', value);
-
             setBonuses({ ...bonuses, [value]: expertiseBonus })
         } else if (!bonuses[value] && stats[skill]) {
             let bonus = findBonus(stats[value]);
@@ -152,11 +147,6 @@ const NpcStatsForm = (props) => {
     }
 
     const renderBonus = (bonus, statType, x) => {
-
-        if (x) {
-            console.log(bonus, statType, stats[statType]);
-
-        }
 
         if (bonus === undefined && statType && stats[statType]) {
             console.log('hit');
@@ -301,7 +291,7 @@ const NpcStatsForm = (props) => {
                     </div>
                     <div>
                         <h2>Intimidation</h2>
-                        {renderBonus(bonuses.Intimidation, 'Intimidation')}
+                        {renderBonus(bonuses.Intimidation, 'Charisma')}
                     </div>
                     <div>
                         <h2>Investigation</h2>
