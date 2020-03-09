@@ -17,6 +17,8 @@ const NpcStatsForm = (props) => {
 
     const { name, level, character_class } = npcInfo;
 
+    // grab npc name, class, and level, then dispatch to reducer
+    // needed to calclulate proficiency bonus and whether or not to render expertise drop down (rogues only)
     useEffect(() => {
         axios.get(`http://localhost:8080/npc/${props.match.params.npcId}`)
             .then((response) => {
@@ -24,6 +26,7 @@ const NpcStatsForm = (props) => {
             })
     }, [dispatch, props.match.params.npcId])
 
+    // calcaulate profiency and expertise bonus based on character level
     let proficiencyBonus = 2;
 
     if (level >= 17) {
@@ -38,6 +41,7 @@ const NpcStatsForm = (props) => {
 
     let expertiseBonus = proficiencyBonus * 2;
 
+    // calculates the +/- bonus for a stat number
     const findBonus = (num) => {
         let bonus = 0;
 
@@ -50,14 +54,19 @@ const NpcStatsForm = (props) => {
         return bonus;
     }
 
-    const handleSelectChange = (event, prop) => {
-        setCurrentSelected({ ...currentSelected, [prop]: event.target.value })
-    }
-
+    // tracks stats than don't affect anything else (health, speed, AC)
     const handleStaticStatChange = (prop, event) => {
         setStats({ ...stats, [prop]: event.target.value });
     }
 
+    // tracks currently selected item in drop down menus 
+    // to be used on button click (handleAddProf, handleAddExp)
+    const handleSelectChange = (event, prop) => {
+        setCurrentSelected({ ...currentSelected, [prop]: event.target.value })
+    }
+
+    // tracks stats in state
+    // calcalates bonus for a specific stat, taking into account profiency and expertise bonus
     const handleStatChange = (prop, event) => {
 
         let bonus = findBonus(event.target.value);
@@ -73,26 +82,23 @@ const NpcStatsForm = (props) => {
 
     }
 
+    // adds profiency to state and updates bonuses accordingly
     const handleAddProf = () => {
 
-        let split = currentSelected.prof.split(',');
+        // set value to the current profiency selection from drop down
+        let value = currentSelected.prof
 
-        let value = split[0];
-        let skill = split[1];
-
+        // if the prof doesn't yet exist in state, or it's set to anything but 'prof' aka normal profiency, add it
         if (!proficiencies[value] || proficiencies[value] === 'exp' || proficiencies[value] === 'none' ) {
             setProficiencies({ ...proficiencies, [value]: 'prof' });
         }
 
-        console.log(bonuses[value]);
-
-
+        // if value is in stats, recalc bonus and add prof
+        // value will only be in stats if this is a main skill (str, dex, con, etc.)
+        // skills aren't held in stats, and if currentProf is a skill then this will never trigger
+        // otherwise, just set bonus to prof or expertise bonus
+        // calculation to add current bonus to prof bonus happens in renderBonus function
         if (stats[value]) {
-            let bonus = findBonus(stats[value]);
-            setBonuses({ ...bonuses, [value]: bonus + proficiencyBonus })
-        } else if (!bonuses[value]) {
-            setBonuses({ ...bonuses, [value]: proficiencyBonus })
-        } else if (!bonuses[value] && stats[skill]) {
             let bonus = findBonus(stats[value]);
             setBonuses({ ...bonuses, [value]: bonus + proficiencyBonus })
         } else {
@@ -103,10 +109,7 @@ const NpcStatsForm = (props) => {
 
     const handleAddExp = () => {
 
-        let split = currentSelected.exp.split(',');
-
-        let value = split[0];
-        let skill = split[1];
+        let value = currentSelected.exp
 
         if (!proficiencies[value] || proficiencies[value] === 'prof' || proficiencies[value] === 'none') {
             setProficiencies({ ...proficiencies, [value]: 'exp' })
@@ -115,21 +118,19 @@ const NpcStatsForm = (props) => {
         if (stats[value]) {
             let bonus = findBonus(stats[value]);
             setBonuses({ ...bonuses, [value]: bonus + expertiseBonus })
-        } else if (!bonuses[value]) {
-            setBonuses({ ...bonuses, [value]: expertiseBonus })
-        } else if (!bonuses[value] && stats[skill]) {
-            let bonus = findBonus(stats[value]);
-            setBonuses({ ...bonuses, [value]: bonus + expertiseBonus })
         } else {
             setBonuses({ ...bonuses, [value]: expertiseBonus })
         }
     };
 
+    // when deleted, reset profiency to none and reset bonus to just bonus from stats
     const handleResetProf = (prof) => {
         setProficiencies({...proficiencies, [prof]: 'none'});
         setBonuses({...bonuses, [prof]: findBonus(stats[prof])});
     }
 
+    // filters out all object properties with using filter (either 'prof' or 'exp')
+    // used to render only proficiencies or expertises from same object
     const filterObject = (object, filter) => {
         let arr = []
 
@@ -142,6 +143,7 @@ const NpcStatsForm = (props) => {
         return arr;
     }
 
+    // renders stat headers and input fields for main, non-static stats (str, dex, con, int, wis, cha)
     const renderStatInput = (stat) => {
         return (
             <div>
@@ -151,8 +153,13 @@ const NpcStatsForm = (props) => {
         )
     }
 
-    const renderBonus = (bonus, statType, x) => {
+    // renders correct bonus for each stat and skill based on stats, bonuses, proficiencies, and expertise
+    // statType argument only exists for skills; all main stats will hit the final else in the outermost set of conditionals
+    // inner logic is just used to render a + in front of positive numbers and a - in front of negative
+    const renderBonus = (bonus, statType) => {
 
+        // if bonus doesn't exist for skill yet, but statType does (aka it's a skill)...
+        // then calc bonus based soley of bonus for that stat
         if (bonus === undefined && statType && stats[statType]) {
             let totalBonus = findBonus(stats[statType]);
             if (totalBonus >= 0) {
@@ -160,7 +167,8 @@ const NpcStatsForm = (props) => {
             } else {
                 return <h2>{`- ${String(totalBonus).slice(1)}`}</h2>
             }
-        } else if (statType && stats[statType]) {
+        } // if bonus for the skill already exists, take that into account and add onto bonus from stat
+          else if (statType && stats[statType]) {
             if (stats[statType]) {
                 let totalBonus = Number(bonus) + findBonus(stats[statType]);
                 if (bonus !== undefined) {
@@ -173,7 +181,8 @@ const NpcStatsForm = (props) => {
                     return <h2>{''}</h2>;
                 }
             }
-        } else {
+        } // otherwise calculate just using the existing bonus in state
+          else {
             if (bonus !== undefined) {
                 if (Number(bonus) >= 0) {
                     return <h2>{`+ ${bonus}`}</h2>
@@ -339,7 +348,6 @@ const NpcStatsForm = (props) => {
                 </div>
             </div>
             <button className="npc-stats-save">SAVE</button>
-            {JSON.stringify(stats, null, 2)}
         </>
     )
 }
