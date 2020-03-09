@@ -48,6 +48,23 @@
 .npc-stats-form-container > div > ul {
     padding-top: 30px;
     font-size: 150%;
+    width: 40%;
+    display: table;
+}
+
+.npc-stats-form-container > div > ul > li {
+    text-align: center;
+    list-style: none;
+}
+
+.npc-stats-form-container > div > ul img{
+    max-height: 10px;
+}
+
+.npc-stats-form-container > div > ul > li > button {
+    display: table-cell;
+    vertical-align: middle;
+    margin-left: 15px;
 }
 
 .npc-stats-form-container > div > div > h2 {

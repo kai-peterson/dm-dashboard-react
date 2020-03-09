@@ -54,6 +54,10 @@ const NpcStatsForm = (props) => {
         setCurrentSelected({ ...currentSelected, [prop]: event.target.value })
     }
 
+    const handleStaticStatChange = (prop, event) => {
+        setStats({ ...stats, [prop]: event.target.value });
+    }
+
     const handleStatChange = (prop, event) => {
 
         let bonus = findBonus(event.target.value);
@@ -76,7 +80,7 @@ const NpcStatsForm = (props) => {
         let value = split[0];
         let skill = split[1];
 
-        if (!proficiencies[value] || proficiencies[value] === 'exp') {
+        if (!proficiencies[value] || proficiencies[value] === 'exp' || proficiencies[value] === 'none' ) {
             setProficiencies({ ...proficiencies, [value]: 'prof' });
         }
 
@@ -104,7 +108,7 @@ const NpcStatsForm = (props) => {
         let value = split[0];
         let skill = split[1];
 
-        if (!proficiencies[value] || proficiencies[value] === 'prof') {
+        if (!proficiencies[value] || proficiencies[value] === 'prof' || proficiencies[value] === 'none') {
             setProficiencies({ ...proficiencies, [value]: 'exp' })
         }
 
@@ -121,8 +125,9 @@ const NpcStatsForm = (props) => {
         }
     };
 
-    const handleStaticStatChange = (prop, event) => {
-        setStats({ ...stats, [prop]: event.target.value });
+    const handleResetProf = (prof) => {
+        setProficiencies({...proficiencies, [prof]: 'none'});
+        setBonuses({...bonuses, [prof]: findBonus(stats[prof])});
     }
 
     const filterObject = (object, filter) => {
@@ -149,8 +154,6 @@ const NpcStatsForm = (props) => {
     const renderBonus = (bonus, statType, x) => {
 
         if (bonus === undefined && statType && stats[statType]) {
-            console.log('hit');
-
             let totalBonus = findBonus(stats[statType]);
             if (totalBonus >= 0) {
                 return <h2>{`+ ${totalBonus}`}</h2>
@@ -216,7 +219,7 @@ const NpcStatsForm = (props) => {
                     {filterObject(proficiencies, 'prof')[0] &&
                         <ul>
                             {filterObject(proficiencies, 'prof').map((proficiency) =>
-                                <li>{proficiency}</li>
+                                <li>{proficiency}<button onClick={() => handleResetProf(proficiency)}><img src="/images/x-icon.png" alt="X icon"/></button></li>
                             )}
                         </ul>
                     }
@@ -228,8 +231,8 @@ const NpcStatsForm = (props) => {
                     }
                     {filterObject(proficiencies, 'exp')[0] &&
                         <ul>
-                            {filterObject(proficiencies, 'exp').map((ex) =>
-                                <li>{ex}</li>
+                            {filterObject(proficiencies, 'exp').map((expertise) =>
+                                <li>{expertise}<button onClick={() => handleResetProf(expertise)}><img src="/images/x-icon.png" alt="X icon"/></button></li>
                             )}
                         </ul>
                     }
