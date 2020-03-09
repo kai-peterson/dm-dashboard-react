@@ -25,8 +25,18 @@
 }
 
 .npc-stats-form-container > div > div > select {
-    transform: scale(2);
+    transform: scale(1.5);
     width: 150px;
+}
+
+.select-container {
+    position: relative;
+    width: 62%;
+}
+
+.npc-stats-form-container__skills-column > div > button {
+    position: absolute;
+    right: 0;
 }
 
 .npc-stats-form-container > div > div {
@@ -49,9 +59,9 @@
     font-size: 150%;
 }
 
-.npc-stats-form-container__proficient-column input {
-    transform: scale(2);
-}
+/* .npc-stats-form-container__proficient-column input {
+    transform: scale(1.5);
+} */
 
 .npc-stats-form-container label {
     font-size: 200%;

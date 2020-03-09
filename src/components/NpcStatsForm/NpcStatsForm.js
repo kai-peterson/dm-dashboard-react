@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './NpcStatsForm.css';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import NpcStatSelect from '../NpcStatSelect/NpcStatSelect';
 
 const npcSelector = (state) => state.npcReducer;
 
@@ -10,6 +11,7 @@ const NpcStatsForm = (props) => {
     const npcInfo = useSelector(npcSelector);
 
     const [stats, setStats] = useState({});
+    const [currentSelected, setCurrentSelected] = useState({ prof: 'Strength', exp: 'Strength' });
     const [proficiencies, setProficiencies] = useState({});
     const [bonuses, setBonuses] = useState({});
 
@@ -36,17 +38,25 @@ const NpcStatsForm = (props) => {
 
     let expertiseBonus = proficiencyBonus * 2;
 
-    const handleStatChange = (prop, event) => {
+    const findBonus = (num) => {
         let bonus = 0;
 
-        if (event.target.value > 11) {
-            bonus = Math.floor((event.target.value - 10) / 2);
-        } else if (event.target.value < 9) {
-            bonus = Math.ceil(-((10 - event.target.value) / 2));
+        if (num > 11) {
+            bonus = Math.floor((num - 10) / 2);
+        } else if (num < 9) {
+            bonus = Math.ceil(-((10 - num) / 2));
         }
 
-        console.log(proficiencies.prop);
+        return bonus;
+    }
 
+    const handleSelectChange = (event, prop) => {
+        setCurrentSelected({ ...currentSelected, [prop]: event.target.value })
+    }
+
+    const handleStatChange = (prop, event) => {
+
+        let bonus = findBonus(event.target.value);
 
         if (proficiencies[prop] === 'prof') {
             bonus += proficiencyBonus;
@@ -59,12 +69,10 @@ const NpcStatsForm = (props) => {
 
     }
 
-    const handleSelect = (event) => {
-        // make value palatable for database
-        // let value = event.target.value;
-        // value = value.toLowerCase().replace(' ', '_');
-        let split = event.target.value.split(',');
-        
+    const handleAddProf = () => {
+
+        let split = currentSelected.prof.split(',');
+
         let value = split[0];
         let skill = split[1];
 
@@ -72,27 +80,47 @@ const NpcStatsForm = (props) => {
             setProficiencies({ ...proficiencies, [value]: 'prof' });
         }
 
-        if (skill && stats[skill]) {
-            setBonuses({ ...bonuses, [value]: stats[skill] + proficiencyBonus })
+        console.log(bonuses[value]);
+
+
+        if (stats[value]) {
+            let bonus = findBonus(stats[value]);
+            setBonuses({ ...bonuses, [value]: bonus + proficiencyBonus })
+        } else if (!bonuses[value]) {
+            setBonuses({ ...bonuses, [value]: proficiencyBonus })
+        } else if (!bonuses[value] && stats[skill]) {
+            let bonus = findBonus(stats[value]);
+            setBonuses({ ...bonuses, [value]: bonus + proficiencyBonus })
         } else {
             setBonuses({ ...bonuses, [value]: proficiencyBonus })
         }
 
     };
 
-    const handleSelectExpertise = (event) => {
-        // make value palatable for database
-        // let value = event.target.value;
-        // value = value.toLowerCase().replace(' ', '_');
-        let value = event.target.value[1] ? event.target.value[0] : event.target.value;
-        let skill = event.target.value[1] ? event.target.value[1] : null;
+    const handleAddExp = () => {
+
+        let split = currentSelected.exp.split(',');
+
+        let value = split[0];
+        let skill = split[1];
 
         if (!proficiencies[value] || proficiencies[value] === 'prof') {
             setProficiencies({ ...proficiencies, [value]: 'exp' })
         }
 
-        if (skill && stats[skill]) {
-            setBonuses({ ...bonuses, [value]: stats[skill] + expertiseBonus })
+        console.log(value);
+
+
+        if (stats[value]) {
+            let bonus = findBonus(stats[value]);
+            setBonuses({ ...bonuses, [value]: bonus + expertiseBonus })
+        } else if (!bonuses[value]) {
+            console.log('hit', value);
+
+            setBonuses({ ...bonuses, [value]: expertiseBonus })
+        } else if (!bonuses[value] && stats[skill]) {
+            let bonus = findBonus(stats[value]);
+            setBonuses({ ...bonuses, [value]: bonus + expertiseBonus })
         } else {
             setBonuses({ ...bonuses, [value]: expertiseBonus })
         }
@@ -114,6 +142,57 @@ const NpcStatsForm = (props) => {
         return arr;
     }
 
+    const renderStatInput = (stat) => {
+        return (
+            <div>
+                <h2>{stat}</h2>
+                <input onChange={(event) => handleStatChange(stat, event)} type="number" placeholder="0 - 20" />
+            </div>
+        )
+    }
+
+    const renderBonus = (bonus, statType, x) => {
+
+        if (x) {
+            console.log(bonus, statType, stats[statType]);
+
+        }
+
+        if (bonus === undefined && statType && stats[statType]) {
+            console.log('hit');
+
+            let totalBonus = findBonus(stats[statType]);
+            if (totalBonus >= 0) {
+                return <h2>{`+ ${totalBonus}`}</h2>
+            } else {
+                return <h2>{`- ${String(totalBonus).slice(1)}`}</h2>
+            }
+        } else if (statType && stats[statType]) {
+            if (stats[statType]) {
+                let totalBonus = Number(bonus) + findBonus(stats[statType]);
+                if (bonus !== undefined) {
+                    if (totalBonus >= 0) {
+                        return <h2>{`+ ${totalBonus}`}</h2>
+                    } else {
+                        return <h2>{`- ${String(totalBonus).slice(1)}`}</h2>
+                    }
+                } else {
+                    return <h2>{''}</h2>;
+                }
+            }
+        } else {
+            if (bonus !== undefined) {
+                if (Number(bonus) >= 0) {
+                    return <h2>{`+ ${bonus}`}</h2>
+                } else {
+                    return <h2>{`- ${String(bonus).slice(1)}`}</h2>
+                }
+            } else {
+                return <h2>{''}</h2>;
+            }
+        }
+    }
+
     return (
         <>
             <div className="npc-stats-header-container">
@@ -121,9 +200,9 @@ const NpcStatsForm = (props) => {
                 <h1>{character_class}</h1>
                 <h1>Level: {level}</h1>
             </div>
-            <h1 style={{ 'textAlign': 'center' }}>Skills</h1>
             <div className="npc-stats-form-container">
                 <div className="npc-stats-form-container__skills-column">
+                    <h1 style={{ 'textAlign': 'center' }}>Stats</h1>
                     <div>
                         <h2>Health</h2>
                         <input onChange={(event) => handleStaticStatChange('health', event)} type="number" placeholder="Hitpoints" />
@@ -136,59 +215,14 @@ const NpcStatsForm = (props) => {
                         <h2>Armor Class</h2>
                         <input onChange={(event) => handleStaticStatChange('armor_class', event)} type="number" placeholder="Armor Class" />
                     </div>
-                    <div>
-                        <h2>Strength</h2>
-                        <input onChange={(event) => handleStatChange('strength', event)} type="number" placeholder="0 - 20" />
-                    </div>
-                    <div>
-                        <h2>Dexterity</h2>
-                        <input onChange={(event) => handleStatChange('dexterity', event)} type="number" placeholder="0 - 20" />
-                    </div>
-                    <div>
-                        <h2>Constitution</h2>
-                        <input onChange={(event) => handleStatChange('constitution', event)} type="number" placeholder="0 - 20" />
-                    </div>
-                    <div>
-                        <h2>Intelligence</h2>
-                        <input onChange={(event) => handleStatChange('intelligence', event)} type="number" placeholder="0 - 20" />
-                    </div>
-                    <div>
-                        <h2>Wisdom</h2>
-                        <input onChange={(event) => handleStatChange('wisdom', event)} type="number" placeholder="0 - 20" />
-                    </div>
-                    <div>
-                        <h2>Charisma</h2>
-                        <input onChange={(event) => handleStatChange('charisma', event)} type="number" placeholder="0 - 20" />
-                    </div>
+                    {renderStatInput('Strength')}
+                    {renderStatInput('Dexterity')}
+                    {renderStatInput('Constitution')}
+                    {renderStatInput('Intelligence')}
+                    {renderStatInput('Wisdom')}
+                    {renderStatInput('Charisma')}
                     <h1>Add Proficiency</h1>
-                    <div>
-                        <select onChange={(event) => handleSelect(event)}>
-                            <option value={["Strength"]}>Strength</option>
-                            <option value={["Dexterity"]}>Dexterity</option>
-                            <option value={["Constitution"]}>Constitution</option>
-                            <option value={["Intelligence"]}>Intelligence</option>
-                            <option value={["Wisdom"]}>Wisdom</option>
-                            <option value={["Charisma"]}>Charisma</option>
-                            <option value={["Acrobatics", 'Dexterity']}>Acrobatics</option>
-                            <option value={["Animal Handling", 'Wisdom']}>Animal Handling</option>
-                            <option value={["Arcana", 'Intelligence']}>Arcana</option>
-                            <option value={["Athletics", "Strength"]}>Athletics</option>
-                            <option value={["Deception", "Charisma"]}>Deception</option>
-                            <option value={["History", 'Intelligence']}>History</option>
-                            <option value={["Insight", 'Wisdom']}>Insight</option>
-                            <option value={["Intimidation", "Charisma"]}>Intimidation</option>
-                            <option value={["Investigation", 'Intelligence']}>Investigation</option>
-                            <option value={["Medicine", 'Wisdom']}>Medicine</option>
-                            <option value={["Nature", 'Intelligence']}>Nature</option>
-                            <option value={["Perception", 'Wisdom']}>Perception</option>
-                            <option value={["Performance", "Charisma"]}>Performance</option>
-                            <option value={["Persuasion", "Charisma"]}>Persuasion</option>
-                            <option value={["Religion", 'Intelligence']}>Religion</option>
-                            <option value={["Sleight of Hand", 'Dexterity']}>Sleight of Hand</option>
-                            <option value={["Stealth", 'Dexterity']}>Stealth</option>
-                            <option value={["Survival", 'Wisdom']}>Survival</option>
-                        </select>
-                    </div>
+                    <NpcStatSelect type='prof' handleSelectChange={handleSelectChange} handleAddSelection={handleAddProf} />
                     {filterObject(proficiencies, 'prof')[0] &&
                         <ul>
                             {filterObject(proficiencies, 'prof').map((proficiency) =>
@@ -199,34 +233,7 @@ const NpcStatsForm = (props) => {
                     {character_class && character_class.toLowerCase() === 'rogue' &&
                         <>
                             <h1>Add Expertise</h1>
-                            <div>
-                                <select onChange={(event) => handleSelectExpertise(event)}>
-                                    <option value={["Strength"]}>Strength</option>
-                                    <option value={["Dexterity"]}>Dexterity</option>
-                                    <option value={["Constitution"]}>Constitution</option>
-                                    <option value={["Intelligence"]}>Intelligence</option>
-                                    <option value={["Wisdom"]}>Wisdom</option>
-                                    <option value={["Charisma"]}>Charisma</option>
-                                    <option value={["Acrobatics", 'Dexterity']}>Acrobatics</option>
-                                    <option value={["Animal Handling", 'Wisdom']}>Animal Handling</option>
-                                    <option value={["Arcana", 'Intelligence']}>Arcana</option>
-                                    <option value={["Athletics", "Strength"]}>Athletics</option>
-                                    <option value={["Deception", "Charisma"]}>Deception</option>
-                                    <option value={["History", 'Intelligence']}>History</option>
-                                    <option value={["Insight", 'Wisdom']}>Insight</option>
-                                    <option value={["Intimidation", "Charisma"]}>Intimidation</option>
-                                    <option value={["Investigation", 'Intelligence']}>Investigation</option>
-                                    <option value={["Medicine", 'Wisdom']}>Medicine</option>
-                                    <option value={["Nature", 'Intelligence']}>Nature</option>
-                                    <option value={["Perception", 'Wisdom']}>Perception</option>
-                                    <option value={["Performance", "Charisma"]}>Performance</option>
-                                    <option value={["Persuasion", "Charisma"]}>Persuasion</option>
-                                    <option value={["Religion", 'Intelligence']}>Religion</option>
-                                    <option value={["Sleight of Hand", 'Dexterity']}>Sleight of Hand</option>
-                                    <option value={["Stealth", 'Dexterity']}>Stealth</option>
-                                    <option value={["Survival", 'Wisdom']}>Survival</option>
-                                </select>
-                            </div>
+                            <NpcStatSelect type='exp' handleSelectChange={handleSelectChange} handleAddSelection={handleAddExp} />
                         </>
                     }
                     {filterObject(proficiencies, 'exp')[0] &&
@@ -238,81 +245,108 @@ const NpcStatsForm = (props) => {
                     }
                 </div>
                 <div className="npc-stats-form-container__skills-column">
+                    <h1>Saving Throws</h1>
+                    <div>
+                        <h2>Strength</h2>
+                        {renderBonus(bonuses.Strength)}
+                    </div>
+                    <div>
+                        <h2>Dexterity</h2>
+                        {renderBonus(bonuses.Dexterity)}
+                    </div>
+                    <div>
+                        <h2>Constitution</h2>
+                        {renderBonus(bonuses.Constitution)}
+                    </div>
+                    <div>
+                        <h2>Intelligence</h2>
+                        {renderBonus(bonuses.Intelligence)}
+                    </div>
+                    <div>
+                        <h2>Wisdom</h2>
+                        {renderBonus(bonuses.Wisdom)}
+                    </div>
+                    <div>
+                        <h2>Charisma</h2>
+                        {renderBonus(bonuses.Charisma)}
+                    </div>
+                    <h1>Skills</h1>
                     <div>
                         <h2>Acrobatics</h2>
-                        <input onChange={() => { }} type="number" placeholder="Dex" value={bonuses.dexterity && Number(bonuses.dexterity)} />
+                        {renderBonus(bonuses.Acrobatics, 'Dexterity')}
                     </div>
                     <div>
                         <h2>Animal Handling</h2>
-                        <input onChange={() => { }} type="number" placeholder="Wis" value={bonuses.wisdom && Number(bonuses.wisdom)} />
+                        {renderBonus(bonuses['Animal Handling'], 'Wisdom')}
                     </div>
                     <div>
                         <h2>Arcana</h2>
-                        <input onChange={() => { }} type="number" placeholder="Int" value={bonuses.intelligence && Number(bonuses.intelligence)} />
+                        {renderBonus(bonuses.Arcana, 'Intelligence')}
                     </div>
                     <div>
                         <h2>Athletics</h2>
-                        <input onChange={() => { }} type="number" placeholder="Str" value={bonuses.strength && Number(bonuses.strength)} />
+                        {renderBonus(bonuses.Athletics, 'Strength')}
                     </div>
                     <div>
                         <h2>Deception</h2>
-                        <input onChange={() => { }} type="number" placeholder="Cha" value={bonuses.charisma && Number(bonuses.charisma)} />
+                        {renderBonus(bonuses.Deception, 'Charisma')}
                     </div>
                     <div>
                         <h2>History</h2>
-                        <input onChange={() => { }} type="number" placeholder="Int" value={bonuses.intelligence && Number(bonuses.intelligence)} />
+                        {renderBonus(bonuses.History, 'Intelligence')}
                     </div>
                     <div>
                         <h2>Insight</h2>
-                        <input onChange={() => { }} type="number" placeholder="Wis" value={bonuses.wisdom && Number(bonuses.wisdom)} />
+                        {renderBonus(bonuses.Insight, 'Wisdom')}
                     </div>
                     <div>
                         <h2>Intimidation</h2>
-                        <input onChange={() => { }} type="number" placeholder="Cha" value={bonuses.charisma && Number(bonuses.charisma)} />
+                        {renderBonus(bonuses.Intimidation, 'Intimidation')}
                     </div>
                     <div>
                         <h2>Investigation</h2>
-                        <input onChange={() => { }} type="number" placeholder="Int" value={bonuses.intelligence && Number(bonuses.intelligence)} />
+                        {renderBonus(bonuses.Investigation, 'Intelligence')}
                     </div>
                     <div>
                         <h2>Medicine</h2>
-                        <input onChange={() => { }} type="number" placeholder="Wis" value={bonuses.wisdom && Number(bonuses.wisdom)} />
+                        {renderBonus(bonuses.Medicine, 'Wisdom')}
                     </div>
                     <div>
                         <h2>Nature</h2>
-                        <input onChange={() => { }} type="number" placeholder="Int" value={bonuses.intelligence && Number(bonuses.intelligence)} />
+                        {renderBonus(bonuses.Nature, 'Intelligence')}
                     </div>
                     <div>
                         <h2>Perception</h2>
-                        <input onChange={() => { }} type="number" placeholder="Wis" value={bonuses.wisdom && Number(bonuses.wisdom)} />
+                        {renderBonus(bonuses.Perception, 'Wisdom')}
                     </div>
                     <div>
                         <h2>Performance</h2>
-                        <input onChange={() => { }} type="number" placeholder="Cha" value={bonuses.charisma && Number(bonuses.charisma)} />
+                        {renderBonus(bonuses.Performance, 'Charisma')}
                     </div>
                     <div>
                         <h2>Persuasion</h2>
-                        <input onChange={() => { }} type="number" placeholder="Cha" value={bonuses.charisma && Number(bonuses.charisma)} />
+                        {renderBonus(bonuses.Persuasion, 'Charisma')}
                     </div>
                     <div>
                         <h2>Religion</h2>
-                        <input onChange={() => { }} type="number" placeholder="Int" value={bonuses.intelligence && Number(bonuses.intelligence)} />
+                        {renderBonus(bonuses.Religion, 'Intelligence')}
                     </div>
                     <div>
                         <h2>Sleight of Hand</h2>
-                        <input onChange={() => { }} type="number" placeholder="Dex" value={bonuses.dexterity && Number(bonuses.dexterity)} />
+                        {renderBonus(bonuses['Sleight of Hand'], 'Dexterity')}
                     </div>
                     <div>
                         <h2>Stealth</h2>
-                        <input onChange={() => { }} type="number" placeholder="Dex" value={bonuses.dexterity && Number(bonuses.dexterity)} />
+                        {renderBonus(bonuses.Stealth, 'Dexterity')}
                     </div>
                     <div>
                         <h2>Survival</h2>
-                        <input onChange={() => { }} type="number" placeholder="Wis" value={bonuses.wisdom && Number(bonuses.wisdom)} />
+                        {renderBonus(bonuses.Survival, 'Wisdom')}
                     </div>
                 </div>
             </div>
             <button className="npc-stats-save">SAVE</button>
+            {JSON.stringify(stats, null, 2)}
         </>
     )
 }
