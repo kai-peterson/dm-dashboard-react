@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import './NpcForm.css';
 import axios from 'axios';
 
 const NpcForm = (props) => {
     const history = useHistory();
+    const dispatch = useDispatch();
     const sessionId = props.match.params.id;
 
-    const [npcInfo, setNpcInfo] = useState({ session_id: Number(sessionId) })
+    const [npcInfo, setNpcInfo] = useState({ session_id: Number(sessionId), alignment: 'Lawful Good', sex: 'M' })
 
     const handleNpcInfoChange = (prop, event) => {
         setNpcInfo({ ...npcInfo, [prop]: event.target.value })
@@ -15,13 +17,14 @@ const NpcForm = (props) => {
 
     const handlePostNpc = () => {
         // validate that user has completed all fields in form
-        if (Object.values(npcInfo).length !== 13) {
+        if (Object.values(npcInfo).length !== 15) {
             alert("You missed a field")
         } else {
             axios.post('http://localhost:8080/npc', npcInfo)
                 .then((response) => {
                     console.log(response);
                     const npcId = response.data.id;
+                    dispatch({type: 'SET_NPC', payload: response.data})
                     history.push(`/session/${sessionId}/npc/${npcId}/stats`)
                 })
                 .catch((error) => {
@@ -47,6 +50,27 @@ const NpcForm = (props) => {
             <div>
                 <h2>Class: </h2>
                 <input onChange={(event) => handleNpcInfoChange('character_class', event)} placeholder="Class" />
+            </div>
+            <div className="npc-form-container__alignment-select">
+                <h2>Alignment: </h2>
+                <select onChange={(event) => handleNpcInfoChange('alignment', event)}>
+                    <option value="Lawful Good">Lawful Good</option>
+                    <option value="Neutral Good">Neutral Good</option>
+                    <option value="Chaotic Good">Chaotic Good</option>
+                    <option value="Lawful Neutral">Lawful Neutral</option>
+                    <option value="Neutral">Neutral</option>
+                    <option value="Chaotic Neutral">Chaotic Neutral</option>
+                    <option value="Lawful Evil">Lawful Evil</option>
+                    <option value="Neutral Evil">Neutral Evil</option>
+                    <option value="Chaotic Evil">Chaotic Evil</option>
+                </select>
+            </div>
+            <div className="npc-form-container__sex-select">
+                <h2>Sex: </h2>
+                <select onChange={(event) => handleNpcInfoChange('sex', event)}>
+                    <option value="M">M</option>
+                    <option value="F">F</option>
+                </select>
             </div>
             <div>
                 <h2>Height: </h2>

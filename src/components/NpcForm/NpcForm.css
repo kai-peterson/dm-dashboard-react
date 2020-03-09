@@ -33,6 +33,25 @@
     padding-right: 15px;
 }
 
+.npc-form-container > div > select {
+    transform: scale(1.5);
+}
+
+.npc-form-container__alignment-select,
+.npc-form-container__sex-select {
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+
+.npc-form-container__alignment-select select {
+    margin-left: 26px;
+}
+
+.npc-form-container__sex-select select {
+    margin-left: 8px;
+}
+
 .npc-form-container__radio-buttons {
     display: flex;
     align-items: center;

@@ -27,7 +27,7 @@ function App() {
         <Route exact path="/session/:id" component={Session} />
         <Route exact path="/session-form" component={SessionForm} />
         <Route exact path="/session/:id/npc" component={NpcForm} />
-        <Route exact path="/session/:sessionId/npc/:npdId/stats" component={NpcStatsForm} />
+        <Route exact path="/session/:sessionId/npc/:npcId/stats" component={NpcStatsForm} />
       </div>
     </Router>
   );

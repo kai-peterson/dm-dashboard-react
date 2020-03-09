@@ -18,7 +18,7 @@ const Session = (props) => {
             .catch((error) => {
                 console.log("Error getting single session's info", error);
             })
-    }, [])
+    }, [sessionId])
 
     const handleAddNpc = () => {
         history.push(`/session/${sessionId}/npc`)
