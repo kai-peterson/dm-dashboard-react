@@ -3,28 +3,30 @@ import './NpcStatsForm.css';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import NpcStatSelect from '../NpcStatSelect/NpcStatSelect';
+import NpcBonusDisplay from '../NpcBonusDisplay/NpcBonusDisplay';
 
 const npcSelector = (state) => state.npcReducer;
 
 const NpcStatsForm = (props) => {
     const dispatch = useDispatch();
     const npcInfo = useSelector(npcSelector);
+    const npcId = props.match.params.npcId;
 
     const [stats, setStats] = useState({});
     const [currentSelected, setCurrentSelected] = useState({ prof: 'Strength', exp: 'Strength' });
     const [proficiencies, setProficiencies] = useState({});
     const [bonuses, setBonuses] = useState({});
 
-    const { name, level, character_class } = npcInfo;
-
     // grab npc name, class, and level, then dispatch to reducer
     // needed to calclulate proficiency bonus and whether or not to render expertise drop down (rogues only)
     useEffect(() => {
-        axios.get(`http://localhost:8080/npc/${props.match.params.npcId}`)
+        axios.get(`http://localhost:8080/npc/${npcId}`)
             .then((response) => {
                 dispatch({ type: 'SET_NPC', payload: response.data })
             })
-    }, [dispatch, props.match.params.npcId])
+    }, [dispatch, npcId])
+
+    const { name, level, character_class } = npcInfo;
 
     // calcaulate profiency and expertise bonus based on character level
     let proficiencyBonus = 2;
@@ -40,6 +42,33 @@ const NpcStatsForm = (props) => {
     }
 
     let expertiseBonus = proficiencyBonus * 2;
+
+    const handlePostNpcStats = () => {
+        // post to stats table and proficiencies table
+        // eslint-disable-next-line no-restricted-globals
+        let confirmation = confirm('Are you sure you\'re ready??')
+        if (Object.values(stats).length === 9 && confirmation) {
+            let statObject = {npc_id: Number(npcId), proficiency: proficiencyBonus, ...stats};
+            console.log(statObject);
+            console.log(proficiencies);
+            axios.post('http://localhost:8080/stats', statObject)
+                .then( (response) => {
+                    console.log(response);
+                })
+                .catch( (error) => {
+                    console.log('Error posting npc stats', error);
+                })
+            axios.post('http://localhost:8080/proficiencies', {...proficiencies, npc_id: Number(npcId)})
+                .then( (response) => {
+                    console.log(response);
+                })
+                .catch( (error) => {
+                    console.log('Error posting npc proficiencies', error);
+                })
+        } else {
+            alert('Please fill out all of your main stats (left column), and don\'t forget to add all your proficiencies!!')
+        }
+    }
 
     // calculates the +/- bonus for a stat number
     const findBonus = (num) => {
@@ -153,47 +182,43 @@ const NpcStatsForm = (props) => {
         )
     }
 
-    // renders correct bonus for each stat and skill based on stats, bonuses, proficiencies, and expertise
-    // statType argument only exists for skills; all main stats will hit the final else in the outermost set of conditionals
-    // inner logic is just used to render a + in front of positive numbers and a - in front of negative
-    const renderBonus = (bonus, statType) => {
+    // // renders correct bonus for each stat and skill based on stats, bonuses, proficiencies, and expertise
+    // // statType argument only exists for skills; all main stats will hit the final else in the outermost set of conditionals
+    // // inner conditional logic is just used to render a + in front of positive numbers and a - in front of negative
+    // const renderBonus = (bonus, statType) => {
 
-        // if bonus doesn't exist for skill yet, but statType does (aka it's a skill)...
-        // then calc bonus based soley of bonus for that stat
-        if (bonus === undefined && statType && stats[statType]) {
-            let totalBonus = findBonus(stats[statType]);
-            if (totalBonus >= 0) {
-                return <h2>{`+ ${totalBonus}`}</h2>
-            } else {
-                return <h2>{`- ${String(totalBonus).slice(1)}`}</h2>
-            }
-        } // if bonus for the skill already exists, take that into account and add onto bonus from stat
-          else if (statType && stats[statType]) {
-            if (stats[statType]) {
-                let totalBonus = Number(bonus) + findBonus(stats[statType]);
-                if (bonus !== undefined) {
-                    if (totalBonus >= 0) {
-                        return <h2>{`+ ${totalBonus}`}</h2>
-                    } else {
-                        return <h2>{`- ${String(totalBonus).slice(1)}`}</h2>
-                    }
-                } else {
-                    return <h2>{''}</h2>;
-                }
-            }
-        } // otherwise calculate just using the existing bonus in state
-          else {
-            if (bonus !== undefined) {
-                if (Number(bonus) >= 0) {
-                    return <h2>{`+ ${bonus}`}</h2>
-                } else {
-                    return <h2>{`- ${String(bonus).slice(1)}`}</h2>
-                }
-            } else {
-                return <h2>{''}</h2>;
-            }
-        }
-    }
+    //     // if bonus doesn't exist for skill yet, but statType does (aka it's a skill)...
+    //     // then calc bonus based soley of bonus for that stat
+    //     if (bonus === undefined && statType && stats[statType]) {
+    //         let totalBonus = findBonus(stats[statType]);
+    //         return renderH2ForBonus(totalBonus);
+    //     } // if bonus for the skill already exists, take that into account and add onto bonus from stat
+    //       else if (statType && stats[statType]) {
+    //         if (stats[statType]) {
+    //             let totalBonus = Number(bonus) + findBonus(stats[statType]);
+    //             if (bonus !== undefined) {
+    //                 return renderH2ForBonus(totalBonus);
+    //             } else {
+    //                 return <h2>{''}</h2>;
+    //             }
+    //         }
+    //     } // otherwise calculate just using the existing bonus in state
+    //       else {
+    //         if (bonus !== undefined) {
+    //             return renderH2ForBonus(Number(bonus));
+    //         } else {
+    //             return <h2>{''}</h2>;
+    //         }
+    //     }
+    // }
+
+    // const renderH2ForBonus = (bonus) => {
+    //     if (bonus >= 0) {
+    //         return <h2>{`+ ${bonus}`}</h2>
+    //     } else {
+    //         return <h2>{`- ${String(bonus).slice(1)}`}</h2>
+    //     }
+    // }
 
     return (
         <>
@@ -246,7 +271,8 @@ const NpcStatsForm = (props) => {
                         </ul>
                     }
                 </div>
-                <div className="npc-stats-form-container__skills-column">
+                <NpcBonusDisplay bonuses={bonuses} stats={stats} findBonus={findBonus}/>
+                {/* <div className="npc-stats-form-container__skills-column">
                     <h1>Saving Throws</h1>
                     <div>
                         <h2>Strength</h2>
@@ -345,9 +371,9 @@ const NpcStatsForm = (props) => {
                         <h2>Survival</h2>
                         {renderBonus(bonuses.Survival, 'Wisdom')}
                     </div>
-                </div>
+                </div> */}
             </div>
-            <button className="npc-stats-save">SAVE</button>
+            <button onClick={handlePostNpcStats} className="npc-stats-save">SAVE</button>
         </>
     )
 }
