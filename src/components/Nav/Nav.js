@@ -12,13 +12,25 @@ function Nav() {
 
     // keep correct tab selected on refresh
     // not the best solution but it works
-    useEffect( () => {
-        if (pathname === '/dice') {
-            setValue(1);
-        } else if (pathname === '/calculator') {
-            setValue(2);
-        } else if (pathname === '/session') {
-            setValue(3);
+    useEffect(() => {
+        switch (pathname) {
+            case '/dice':
+                setValue(1);
+                break;
+            case '/calculator':
+                setValue(2);
+                break;
+            case '/session':
+                setValue(3);
+                break;
+            case '/spells':
+                setValue(4);
+                break;
+            case '/monsters':
+                setValue(5);
+                break;
+            default:
+                break;
         }
     }, [pathname])
 
@@ -30,18 +42,20 @@ function Nav() {
         history.push(path);
     }
 
-        return (
-            <div className="top-nav">
-                <AppBar position="static" style={{'backgroundColor': 'darkslategrey'}}>
-                    <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                        <Tab onClick={() => handleRouteChange("/audio")} label="Audio"/>
-                        <Tab onClick={() => handleRouteChange("/dice")} label="Dice"/>
-                        <Tab onClick={() => handleRouteChange("/calculator")} label="Calculator" />
-                        <Tab onClick={() => handleRouteChange("/session")} label="Session" />
-                    </Tabs>
-                </AppBar>
-            </div>
-        )
+    return (
+        <div className="top-nav">
+            <AppBar position="static" style={{ 'backgroundColor': 'darkslategrey' }}>
+                <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                    <Tab onClick={() => handleRouteChange("/audio")} label="Audio" />
+                    <Tab onClick={() => handleRouteChange("/dice")} label="Dice" />
+                    <Tab onClick={() => handleRouteChange("/calculator")} label="Calculator" />
+                    <Tab onClick={() => handleRouteChange("/session")} label="Session" />
+                    <Tab onClick={() => handleRouteChange("/spells")} label="spells" />
+                    <Tab onClick={() => handleRouteChange("/monsters")} label="Monsters" />
+                </Tabs>
+            </AppBar>
+        </div>
+    )
 }
 
 export default Nav

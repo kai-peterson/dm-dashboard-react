@@ -11,6 +11,9 @@ import Session from '../Session/Session';
 import SessionForm from '../SessionForm/SessionForm';
 import NpcForm from '../NpcForm/NpcForm';
 import NpcStatsForm from '../NpcStatsForm/NpcStatsForm';
+import SpellList from '../SpellList/SpellList';
+import MonsterList from '../MonsterList/MonsterList';
+import DbDummy from '../DbDummy/DbDummy';
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
         <Route exact path="/session-form" component={SessionForm} />
         <Route exact path="/session/:id/npc" component={NpcForm} />
         <Route exact path="/session/:sessionId/npc/:npcId/stats" component={NpcStatsForm} />
+        <Route exact path="/spells" component={SpellList} />
+        <Route exact path="/monsters" component={MonsterList} />
+        <Route exact path="/dbinsert" component={DbDummy} />
       </div>
     </Router>
   );

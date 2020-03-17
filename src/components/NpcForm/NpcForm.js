@@ -94,9 +94,9 @@ const NpcForm = (props) => {
                 <input onChange={(event) => handleNpcInfoChange('hair', event)} placeholder="Hair" />
             </div>
             <div className="npc-form-container__radio-buttons">
-                <label for="important">Important</label>
+                <label htmlFor="important">Important</label>
                 <input onClick={(event) => handleNpcInfoChange('important', event)} name="importantBoolean" id="important" value="true" type="radio" />
-                <label for="unimportant">Not Important</label>
+                <label htmlFor="unimportant">Not Important</label>
                 <input onClick={(event) => handleNpcInfoChange('important', event)} name="importantBoolean" id="unimportant" value="false" type="radio" />
             </div>
             <textarea onChange={(event) => handleNpcInfoChange('notes', event)} placeholder="Extra character notes" />

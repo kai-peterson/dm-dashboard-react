@@ -46,19 +46,17 @@ const NpcStatsForm = (props) => {
     const handlePostNpcStats = () => {
         // post to stats table and proficiencies table
         // eslint-disable-next-line no-restricted-globals
-        let confirmation = confirm('Are you sure you\'re ready??')
+        let confirmation = confirm('Make sure you\'ve correctly entered all stats in the left column and all proficiencies or expertises (rogue only). Ready??')
         if (Object.values(stats).length === 9 && confirmation) {
-            let statObject = {npc_id: Number(npcId), proficiency: proficiencyBonus, ...stats};
-            console.log(statObject);
-            console.log(proficiencies);
-            axios.post('http://localhost:8080/stats', statObject)
+            let statObject = {proficiency_bonus: proficiencyBonus, ...stats};            
+            axios.post('http://localhost:8080/stats', keysToLowerCase(statObject))
                 .then( (response) => {
                     console.log(response);
                 })
                 .catch( (error) => {
                     console.log('Error posting npc stats', error);
                 })
-            axios.post('http://localhost:8080/proficiencies', {...proficiencies, npc_id: Number(npcId)})
+            axios.post('http://localhost:8080/proficiencies', keysToLowerCase(proficiencies))
                 .then( (response) => {
                     console.log(response);
                 })
@@ -70,7 +68,17 @@ const NpcStatsForm = (props) => {
         }
     }
 
-    // calculates the +/- bonus for a stat number
+    // converts all keys in object to lowercase so can post to database
+    // replace spaces with underscores and convert keys to lowercase (only affects proficiencies)
+    const keysToLowerCase = (obj) => {
+        let finalStatObject = {};
+        for (let prop in obj) {
+            finalStatObject[prop.toLowerCase().replace(' ', '_')] = obj[prop];
+        }
+        return {...finalStatObject, npcId: Number(npcId)};
+    }
+
+    // calculates the +/- bonus for a stat number (1-20)
     const findBonus = (num) => {
         let bonus = 0;
 
@@ -182,44 +190,6 @@ const NpcStatsForm = (props) => {
         )
     }
 
-    // // renders correct bonus for each stat and skill based on stats, bonuses, proficiencies, and expertise
-    // // statType argument only exists for skills; all main stats will hit the final else in the outermost set of conditionals
-    // // inner conditional logic is just used to render a + in front of positive numbers and a - in front of negative
-    // const renderBonus = (bonus, statType) => {
-
-    //     // if bonus doesn't exist for skill yet, but statType does (aka it's a skill)...
-    //     // then calc bonus based soley of bonus for that stat
-    //     if (bonus === undefined && statType && stats[statType]) {
-    //         let totalBonus = findBonus(stats[statType]);
-    //         return renderH2ForBonus(totalBonus);
-    //     } // if bonus for the skill already exists, take that into account and add onto bonus from stat
-    //       else if (statType && stats[statType]) {
-    //         if (stats[statType]) {
-    //             let totalBonus = Number(bonus) + findBonus(stats[statType]);
-    //             if (bonus !== undefined) {
-    //                 return renderH2ForBonus(totalBonus);
-    //             } else {
-    //                 return <h2>{''}</h2>;
-    //             }
-    //         }
-    //     } // otherwise calculate just using the existing bonus in state
-    //       else {
-    //         if (bonus !== undefined) {
-    //             return renderH2ForBonus(Number(bonus));
-    //         } else {
-    //             return <h2>{''}</h2>;
-    //         }
-    //     }
-    // }
-
-    // const renderH2ForBonus = (bonus) => {
-    //     if (bonus >= 0) {
-    //         return <h2>{`+ ${bonus}`}</h2>
-    //     } else {
-    //         return <h2>{`- ${String(bonus).slice(1)}`}</h2>
-    //     }
-    // }
-
     return (
         <>
             <div className="npc-stats-header-container">
@@ -272,106 +242,6 @@ const NpcStatsForm = (props) => {
                     }
                 </div>
                 <NpcBonusDisplay bonuses={bonuses} stats={stats} findBonus={findBonus}/>
-                {/* <div className="npc-stats-form-container__skills-column">
-                    <h1>Saving Throws</h1>
-                    <div>
-                        <h2>Strength</h2>
-                        {renderBonus(bonuses.Strength)}
-                    </div>
-                    <div>
-                        <h2>Dexterity</h2>
-                        {renderBonus(bonuses.Dexterity)}
-                    </div>
-                    <div>
-                        <h2>Constitution</h2>
-                        {renderBonus(bonuses.Constitution)}
-                    </div>
-                    <div>
-                        <h2>Intelligence</h2>
-                        {renderBonus(bonuses.Intelligence)}
-                    </div>
-                    <div>
-                        <h2>Wisdom</h2>
-                        {renderBonus(bonuses.Wisdom)}
-                    </div>
-                    <div>
-                        <h2>Charisma</h2>
-                        {renderBonus(bonuses.Charisma)}
-                    </div>
-                    <h1>Skills</h1>
-                    <div>
-                        <h2>Acrobatics</h2>
-                        {renderBonus(bonuses.Acrobatics, 'Dexterity')}
-                    </div>
-                    <div>
-                        <h2>Animal Handling</h2>
-                        {renderBonus(bonuses['Animal Handling'], 'Wisdom')}
-                    </div>
-                    <div>
-                        <h2>Arcana</h2>
-                        {renderBonus(bonuses.Arcana, 'Intelligence')}
-                    </div>
-                    <div>
-                        <h2>Athletics</h2>
-                        {renderBonus(bonuses.Athletics, 'Strength')}
-                    </div>
-                    <div>
-                        <h2>Deception</h2>
-                        {renderBonus(bonuses.Deception, 'Charisma')}
-                    </div>
-                    <div>
-                        <h2>History</h2>
-                        {renderBonus(bonuses.History, 'Intelligence')}
-                    </div>
-                    <div>
-                        <h2>Insight</h2>
-                        {renderBonus(bonuses.Insight, 'Wisdom')}
-                    </div>
-                    <div>
-                        <h2>Intimidation</h2>
-                        {renderBonus(bonuses.Intimidation, 'Charisma')}
-                    </div>
-                    <div>
-                        <h2>Investigation</h2>
-                        {renderBonus(bonuses.Investigation, 'Intelligence')}
-                    </div>
-                    <div>
-                        <h2>Medicine</h2>
-                        {renderBonus(bonuses.Medicine, 'Wisdom')}
-                    </div>
-                    <div>
-                        <h2>Nature</h2>
-                        {renderBonus(bonuses.Nature, 'Intelligence')}
-                    </div>
-                    <div>
-                        <h2>Perception</h2>
-                        {renderBonus(bonuses.Perception, 'Wisdom')}
-                    </div>
-                    <div>
-                        <h2>Performance</h2>
-                        {renderBonus(bonuses.Performance, 'Charisma')}
-                    </div>
-                    <div>
-                        <h2>Persuasion</h2>
-                        {renderBonus(bonuses.Persuasion, 'Charisma')}
-                    </div>
-                    <div>
-                        <h2>Religion</h2>
-                        {renderBonus(bonuses.Religion, 'Intelligence')}
-                    </div>
-                    <div>
-                        <h2>Sleight of Hand</h2>
-                        {renderBonus(bonuses['Sleight of Hand'], 'Dexterity')}
-                    </div>
-                    <div>
-                        <h2>Stealth</h2>
-                        {renderBonus(bonuses.Stealth, 'Dexterity')}
-                    </div>
-                    <div>
-                        <h2>Survival</h2>
-                        {renderBonus(bonuses.Survival, 'Wisdom')}
-                    </div>
-                </div> */}
             </div>
             <button onClick={handlePostNpcStats} className="npc-stats-save">SAVE</button>
         </>
